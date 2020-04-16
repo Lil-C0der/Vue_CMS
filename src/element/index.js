@@ -11,7 +11,19 @@ import {
   Footer,
   Menu,
   Submenu,
-  MenuItem
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Card,
+  Row,
+  Col,
+  Table,
+  TableColumn,
+  Switch,
+  Tooltip,
+  Pagination,
+  Dialog,
+  MessageBox
 } from 'element-ui'
 
 const element = {
@@ -20,10 +32,6 @@ const element = {
     Vue.use(FormItem)
     Vue.use(Button)
     Vue.use(Input)
-    Message.install = function (Vue) {
-      Vue.prototype.$message = Message
-    }
-    Vue.use(Message)
     Vue.use(Container)
     Vue.use(Aside)
     Vue.use(Main)
@@ -32,6 +40,19 @@ const element = {
     Vue.use(Menu)
     Vue.use(Submenu)
     Vue.use(MenuItem)
+    Vue.use(Breadcrumb)
+    Vue.use(BreadcrumbItem)
+    Vue.use(Card)
+    Vue.use(Row)
+    Vue.use(Col)
+    Vue.use(Table)
+    Vue.use(TableColumn)
+    Vue.use(Switch)
+    Vue.use(Tooltip)
+    Vue.use(Pagination)
+    Vue.use(Dialog)
+    Vue.prototype.$message = Message
+    Vue.prototype.$confirm = MessageBox.confirm
   }
 }
 

@@ -5,6 +5,8 @@ import router from './router'
 import element from 'element'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import 'default-passive-events'
+
 Vue.use(element)
 
 Vue.config.productionTip = false

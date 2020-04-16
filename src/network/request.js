@@ -6,11 +6,9 @@ const request = axios.create({
 
 // 请求拦截
 request.interceptors.request.use(
-  //   (config) => config,
   (config) => {
     // 在请求头提供token
     config.headers.Authorization = window.sessionStorage.getItem('token')
-    // console.log(config)
     return config
   },
   (err) => {

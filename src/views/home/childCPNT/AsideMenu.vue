@@ -1,11 +1,8 @@
 <template>
   <el-menu
-    default-active="2"
-    unique-opened
+    :default-active="activeIndex"
     :collapse="isCollapse"
     class="aside-menu el-menu-vertical"
-    @open="handleOpen"
-    @close="handleClose"
     :collapse-transition="false"
     router
     background-color="#333744"
@@ -13,7 +10,6 @@
     active-text-color="#409EFF"
   >
     <!-- 一级菜单 -->
-    <!-- <el-submenu v-for="(n, i) in menuList" :key="n.id" :index="i + ''"> -->
     <el-submenu v-for="n in menuList" :key="n.id" :index="n.path">
       <template slot="title">
         <div class="menu-item">
@@ -26,6 +22,7 @@
         v-for="(child, childIndex) in n.children"
         :key="childIndex.id"
         :index="child.path"
+        @click="menuItemClick({ parent: n.authName, child: child.authName })"
       >
         <template slot="title">
           <div class="menu-item">
@@ -42,7 +39,9 @@
 export default {
   name: 'asideMenu',
   data() {
-    return {}
+    return {
+      activeIndex: ''
+    }
   },
   props: {
     menuList: {
@@ -59,12 +58,12 @@ export default {
     }
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
+    menuItemClick(authNameObj) {
+      this.$emit('menuItemClick', authNameObj)
     }
+  },
+  mounted() {
+    this.activeIndex = window.sessionStorage.getItem('activeIndex')
   },
   components: {}
 }

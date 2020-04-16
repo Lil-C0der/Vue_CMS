@@ -18,12 +18,20 @@
           :menuList="menuList"
           :menuIconObj="menuIconObj"
           :isCollapse="isCollapse"
+          @menuItemClick="menuItemClick"
         />
       </el-aside>
       <el-container>
         <!-- 主体区域 -->
         <el-main>
-          <router-view />
+          <bread-crumb
+            :crumbObj="crumbObj"
+            :showAllItem="$route.path !== '/welcome'"
+          />
+
+          <keep-alive>
+            <router-view />
+          </keep-alive>
         </el-main>
         <!-- 底部区域 -->
         <el-footer>Footer</el-footer>
@@ -35,13 +43,17 @@
 <script>
 import AsideMenu from 'views/home/childCPNT/AsideMenu'
 
+import BreadCrumb from 'components/common/BreadCrumb'
+
 import { getMenuList } from 'network/home'
 
 export default {
   name: 'home',
   data() {
     return {
+      // 菜单列表
       menuList: [],
+      // 一级菜单图标
       menuIconObj: {
         125: 'el-icon-s-custom',
         103: 'el-icon-s-operation',
@@ -50,10 +62,17 @@ export default {
         145: 'el-icon-s-marketing'
       },
       // 是否折叠
-      isCollapse: false
+      isCollapse: false,
+      // 面包屑二级导航
+      crumbObj: {}
     }
   },
+  components: {
+    AsideMenu,
+    BreadCrumb
+  },
   methods: {
+    // 退出
     logout() {
       sessionStorage.clear('token')
       this.$message.error({
@@ -67,11 +86,13 @@ export default {
     // 侧边栏折叠
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    menuItemClick(authNameObj) {
+      this.crumbObj = authNameObj
+      sessionStorage.setItem('crumbObj', JSON.stringify(this.crumbObj))
     }
   },
-  components: {
-    AsideMenu
-  },
+
   created() {
     // 获取左侧菜单列表数据
     getMenuList()
@@ -86,7 +107,6 @@ export default {
         }
         const data = res.data
         this.menuList = data
-        console.log(data)
       })
       .catch((err) => {
         this.$message.error({
@@ -96,6 +116,12 @@ export default {
           duration: 1000
         })
       })
+    // 获取面包屑导航信息 存放在sessionStorage中
+    if (!this.crumbObj.length) {
+      if (sessionStorage.getItem('crumbObj')) {
+        this.crumbObj = JSON.parse(sessionStorage.getItem('crumbObj'))
+      }
+    }
   }
 }
 </script>
@@ -127,7 +153,7 @@ export default {
     background-color: #333744;
     color: #333;
     text-align: center;
-    line-height: 200px;
+    // line-height: 200px;
     .toggle-button {
       height: 40px;
       color: #fff;
@@ -146,7 +172,7 @@ export default {
     background-color: #eaedf1;
     color: #333;
     text-align: center;
-    line-height: 160px;
+    // line-height: 160px;
   }
 }
 </style>
