@@ -1,70 +1,78 @@
 <template>
-  <div>
-    <el-card class="box-card">
-      <!-- 搜索与添加 -->
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input
-            clearable
-            @clear="getUser(queryInfo)"
-            v-model="queryInfo.query"
-            placeholder="请输入内容"
-          >
-            <el-button
-              slot="append"
-              @click="queryUser(queryInfo.query)"
-              icon="el-icon-search"
-            ></el-button>
-          </el-input>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" @click="addDialogVisible = true"
-            >添加用户</el-button
-          >
-        </el-col>
-      </el-row>
-      <div class="text item">
-        <!-- 表单区域 -->
-        <user-table
-          @update:state="updateState"
-          @editUser="showUserInfo"
-          @deleteBtnClick="deleteUser"
-          :userList="userList"
-        ></user-table>
-      </div>
-      <!-- 添加用户对话框 -->
-      <add-user-dialog
-        @cancelDialog="cancelDialog('addDialogVisible')"
-        @saveChange="saveAddUser"
-        :dialogVisible="addDialogVisible"
-      />
-      <!-- 编辑用户对话框 -->
-      <edit-user-dialog
-        @cancelDialog="cancelDialog('editDialogVisible')"
-        @saveChange="saveEditUser"
-        :editUserForm="editUserForm"
-        :dialogVisible="editDialogVisible"
-      />
+  <el-card class="box-card">
+    <!-- 搜索与添加 -->
+    <el-row :gutter="20">
+      <el-col :span="8">
+        <el-input
+          clearable
+          @clear="getUser(queryInfo)"
+          v-model="queryInfo.query"
+          placeholder="请输入内容"
+        >
+          <el-button
+            slot="append"
+            @click="queryUser(queryInfo.query)"
+            icon="el-icon-search"
+          ></el-button>
+        </el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary" @click="addDialogVisible = true"
+          >添加用户</el-button
+        >
+      </el-col>
+    </el-row>
+    <div class="text item">
+      <!-- 表单区域 -->
+      <user-table
+        @update:state="updateState"
+        @editUser="showUserInfo"
+        @deleteBtnClick="deleteUser"
+        :userList="userList"
+      ></user-table>
+    </div>
+    <!-- 添加用户对话框 -->
+    <Dialog
+      :title="'添加用户'"
+      :dialogVisible="addDialogVisible"
+      @cancelDialog="cancelDialog('addDialogVisible')"
+      @saveChange="saveAddUser('addUserFormRef')"
+      @clearForm="clearForm('addUserFormRef')"
+    >
+      <add-user-form ref="addUserFormRef" />
+    </Dialog>
 
-      <!-- 分页器 -->
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="queryInfo.pagenum"
-        :page-sizes="[2, 4, 10, 20]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        :page-size="this.queryInfo.pagesize"
-      >
-      </el-pagination>
-    </el-card>
-  </div>
+    <!-- 编辑用户对话框 -->
+    <Dialog
+      :title="'编辑用户'"
+      :dialogVisible="editDialogVisible"
+      @cancelDialog="cancelDialog('editDialogVisible')"
+      @saveChange="saveEditUser('editUserFormRef', editUserForm)"
+      @clearForm="clearForm('editUserFormRef')"
+    >
+      <!-- TODO 编辑用户表单 -->
+      <edit-user-form ref="editUserFormRef" :editUserForm="editUserForm" />
+    </Dialog>
+
+    <!-- 分页器 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="queryInfo.pagenum"
+      :page-sizes="[2, 4, 10, 20]"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      :page-size="this.queryInfo.pagesize"
+    >
+    </el-pagination>
+  </el-card>
 </template>
 
 <script>
 import UserTable from './UserTable'
-import AddUserDialog from './AddUserDiaglog'
-import EditUserDialog from './EditUserDialog'
+import Dialog from 'components/common/Dialog'
+import EditUserForm from './EditUserForm'
+import AddUserForm from './AddUserForm'
 
 import {
   getUsersData,
@@ -97,8 +105,9 @@ export default {
   },
   components: {
     UserTable,
-    AddUserDialog,
-    EditUserDialog
+    Dialog,
+    AddUserForm,
+    EditUserForm
   },
   methods: {
     // 渲染用户列表
@@ -132,6 +141,7 @@ export default {
           })
         })
     },
+    // TODO 跳转最后一页
     // 页码值改变
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
@@ -142,6 +152,7 @@ export default {
       this.queryInfo.pagesize = newSize
       this.getUser(this.queryInfo)
     },
+
     // 表单中开关状态变化 修改数据库中用户状态
     updateState(id, type) {
       changeState(id, type)
@@ -180,29 +191,49 @@ export default {
     cancelDialog(visble) {
       this[visble] = false
     },
-    // 添加用户 关闭弹窗
-    saveAddUser(userInfo) {
-      const { username, pass, email, mobile } = userInfo
-      addUser(username, pass, email, mobile).then((res) => {
-        if (res.meta.status !== 201) {
-          return this.$message.error({
+    // 重置表单 参数ref为表单的引用
+    clearForm(ref) {
+      this.$refs[ref].$refs.formRef.resetFields()
+    },
+    // 表单预校验
+    preCheck(ref) {
+      return this.$refs[ref].$refs.formRef.validate()
+    },
+    // 添加用户并关闭对话框
+    saveAddUser(ref) {
+      this.preCheck(ref)
+        .then(() => {
+          const {
+            username,
+            pass,
+            email,
+            mobile
+          } = this.$refs.addUserFormRef.addUserForm
+          return addUser(username, pass, email, mobile)
+        })
+        .then((res) => {
+          if (res.meta.status !== 201) {
+            return this.$message.error({
+              message: res.meta.msg,
+              center: true,
+              showClose: true,
+              duration: 1000
+            })
+          }
+          this.$message.success({
             message: res.meta.msg,
             center: true,
             showClose: true,
             duration: 1000
           })
-        }
-        this.$message.success({
-          message: res.meta.msg,
-          center: true,
-          showClose: true,
-          duration: 1000
+          // 更新视图
+          this.getUser(this.queryInfo)
+          // 关闭对话框
+          this.cancelDialog('addDialogVisible')
         })
-        // 关闭对话框
-        this.addDialogVisible = false
-        // 更新视图
-        this.getUser(this.queryInfo)
-      })
+        .catch(() => {
+          return false
+        })
     },
     // 根据id展示要修改的用户信息
     showUserInfo(id) {
@@ -215,29 +246,32 @@ export default {
       this.editDialogVisible = true
     },
     // 修改用户信息并保存
-    saveEditUser(editUserForm) {
-      const { id, email, mobile } = editUserForm
-      // 在数据库中修改对应的用户
-      modifyUser(id, email, mobile).then((res) => {
-        if (res.meta.status !== 200) {
-          return this.$message.error({
+    saveEditUser(ref, form) {
+      this.preCheck(ref)
+        .then(() => {
+          const { id, email, mobile } = form
+          return modifyUser(id, email, mobile)
+        })
+        .then((res) => {
+          if (res.meta.status !== 200) {
+            return this.$message.error({
+              message: res.meta.msg,
+              center: true,
+              showClose: true,
+              duration: 1000
+            })
+          }
+          this.$message.success({
             message: res.meta.msg,
             center: true,
             showClose: true,
             duration: 1000
           })
-        }
-        this.$message.success({
-          message: res.meta.msg,
-          center: true,
-          showClose: true,
-          duration: 1000
+          // 更新视图
+          this.getUser(this.queryInfo)
+          //   // 关闭对话框
+          this.cancelDialog('editDialogVisible')
         })
-        // 关闭对话框
-        this.editDialogVisible = false
-        // 更新视图
-        this.getUser(this.queryInfo)
-      })
     },
     // 弹出删除用户警告
     deleteUser(id) {
@@ -263,8 +297,6 @@ export default {
               showClose: true,
               duration: 1000
             })
-            // 关闭对话框
-            this.editDialogVisible = false
             // 更新视图
             this.getUser(this.queryInfo)
           })

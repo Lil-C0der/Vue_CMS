@@ -5,10 +5,11 @@ Vue.use(VueRouter)
 
 const Login = () => import('views/login/Login')
 const Home = () => import('views/home/Home')
-const Welcome = () => import('views/home/childCPNT/Welcome')
+const Welcome = () => import('views/home/childCPNT/welcome/Welcome')
 const SKip = () => import('views/common/Skip')
 const Users = () => import('views/home/childCPNT/users/Users')
-const Roles = () => import('views/home/childCPNT/roles/Roles')
+const Rights = () => import('views/home/childCPNT/power/Rights')
+const Roles = () => import('views/home/childCPNT/power/Roles')
 
 const routes = [
   {
@@ -26,6 +27,7 @@ const routes = [
     children: [
       { path: '/welcome', component: Welcome },
       { path: '/users', component: Users },
+      { path: '/rights', component: Rights },
       { path: '/roles', component: Roles }
     ]
   },
