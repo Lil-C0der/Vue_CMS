@@ -6,7 +6,6 @@ export function getUsersData(query, pagenum, pagesize) {
     url: '/users',
     method: 'GET',
     params: {
-      //   queryInfo
       query,
       pagenum,
       pagesize
@@ -59,6 +58,17 @@ export function deleteUserById(id) {
     method: 'DELETE',
     data: {
       id
+    }
+  })
+}
+// 分配权限
+export function setUserRoleById(uid, rid) {
+  return instance({
+    url: `users/${uid}/role`,
+    method: 'PUT',
+    data: {
+      uid,
+      rid
     }
   })
 }

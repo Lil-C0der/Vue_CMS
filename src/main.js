@@ -12,7 +12,10 @@ import { optionalChaining } from 'common/utils'
 
 Vue.use(element)
 
+// 解决可选链在template中使用的问题
 Vue.prototype.$$ = optionalChaining
+// 添加事件总线对象
+Vue.prototype.$bus = new Vue()
 
 Vue.config.productionTip = false
 new Vue({

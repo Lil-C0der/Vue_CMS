@@ -3,7 +3,7 @@
     <!-- 一级 -->
     <el-row class="row-outer" v-for="(level1, i) in children" :key="i">
       <el-col class="level-1" :span="5">
-        <el-tag closable type="primary">
+        <el-tag closable type="primary" @close="removeTag(roleId, level1.id)">
           {{ level1.authName }}
         </el-tag>
         <i class="el-icon-caret-right"></i>
@@ -17,7 +17,11 @@
         >
           <!-- 二级权限 -->
           <el-col class="level-2" :span="8">
-            <el-tag closable type="success">
+            <el-tag
+              closable
+              type="success"
+              @close="removeTag(roleId, level2.id)"
+            >
               {{ level2.authName }}
             </el-tag>
             <i class="el-icon-caret-right"></i>
@@ -29,6 +33,7 @@
               :key="i"
               closable
               type="warning"
+              @close="removeTag(roleId, level3.id)"
             >
               {{ level3.authName }}
             </el-tag>
@@ -48,13 +53,23 @@ export default {
     }
   },
   props: {
+    roleId: {
+      type: Number,
+      default: 0
+    },
     children: {
       type: Array,
       default: () => []
     }
   },
-  mounted() {
-    console.log(this.children)
+  methods: {
+    removeTag(roleId, rightId) {
+      const ids = {
+        roleId,
+        rightId
+      }
+      this.$bus.$emit('removeTag', ids)
+    }
   },
   components: {}
 }

@@ -41,9 +41,11 @@ export default {
       })
     }
   },
+  created() {},
   mounted() {
     this.getRightsList('list')
-  }
+  },
+  updated() {}
 }
 </script>
 

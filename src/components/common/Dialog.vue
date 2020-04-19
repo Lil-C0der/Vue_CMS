@@ -1,10 +1,11 @@
 <template>
   <!-- 对话框 -->
   <el-dialog
+    :width="width"
     :title="title"
     :visible.sync="dialogVisible"
     :before-close="handleClose"
-    @closed="clearForm"
+    @closed="closeDialog"
   >
     <!-- 对话框内容 -->
     <slot></slot>
@@ -30,6 +31,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    width: {
+      type: String,
+      default: '50%'
     }
   },
   methods: {
@@ -44,8 +49,8 @@ export default {
       this.$emit('cancelDialog')
     },
     // 对话框关闭 重置表单
-    clearForm() {
-      this.$emit('clearForm')
+    closeDialog() {
+      this.$emit('closeDialog')
     }
   },
   components: {}

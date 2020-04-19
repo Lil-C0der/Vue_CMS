@@ -3,7 +3,10 @@
     <el-table-column type="expand">
       <template slot-scope="scope">
         <!-- 表格展开内容 -->
-        <roles-expand-tree :children="scope.row.children"></roles-expand-tree>
+        <roles-expand-tree
+          :roleId="scope.row.id"
+          :children="scope.row.children"
+        ></roles-expand-tree>
       </template>
     </el-table-column>
     <el-table-column type="index" width="50" label="#"></el-table-column>
@@ -13,14 +16,34 @@
     </el-table-column>
     <!-- 表格操作列 -->
     <el-table-column label="操作">
-      <template>
-        <el-button size="mini" type="primary" icon="el-icon-edit">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          type="primary"
+          icon="el-icon-edit"
+          @click="editBtnClick(scope.row.id)"
+        >
           编辑
         </el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete">
+        <el-button
+          size="mini"
+          type="danger"
+          icon="el-icon-delete"
+          @click="deleteBtnClick(scope.row.id)"
+        >
           删除
         </el-button>
-        <el-button size="mini" type="warning" icon="el-icon-setting">
+        <el-button
+          size="mini"
+          type="warning"
+          icon="el-icon-setting"
+          @click="
+            settingBtnClick({
+              id: scope.row.id,
+              rights: scope.row.children
+            })
+          "
+        >
           分配权限
         </el-button>
       </template>
@@ -40,6 +63,17 @@ export default {
     rolesList: {
       type: Array,
       default: () => []
+    }
+  },
+  methods: {
+    editBtnClick(id) {
+      this.$emit('editRole', id)
+    },
+    deleteBtnClick(id) {
+      this.$emit('deleteBtnClick', id)
+    },
+    settingBtnClick(role) {
+      this.$emit('settingBtnClick', role)
     }
   },
   components: {

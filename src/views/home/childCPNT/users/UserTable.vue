@@ -4,9 +4,13 @@
     <el-table-column prop="username" label="用户名" width="80">
     </el-table-column>
     <el-table-column prop="email" label="邮箱"></el-table-column>
-    <el-table-column prop="role_name" label="角色"></el-table-column>
-    <el-table-column prop="mobile" label="电话"></el-table-column>
-    <el-table-column prop="mg_state" label="状态">
+    <el-table-column
+      prop="role_name"
+      label="角色"
+      width="130"
+    ></el-table-column>
+    <el-table-column prop="mobile" label="电话" width="180"></el-table-column>
+    <el-table-column prop="mg_state" label="状态" width="150">
       <!-- 状态单元格 -->
       <template slot-scope="scope">
         <el-switch
@@ -16,7 +20,7 @@
         </el-switch>
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="180">
+    <el-table-column label="操作" width="280">
       <!-- 作用域插槽 -->
       <template slot-scope="scope">
         <el-tooltip
@@ -57,6 +61,13 @@
           placement="top"
         >
           <el-button
+            @click="
+              settingBtnClick({
+                id: scope.row.id,
+                username: scope.row.username,
+                roleName: scope.row.role_name
+              })
+            "
             size="mini"
             type="warning"
             icon="el-icon-setting"
@@ -88,6 +99,9 @@ export default {
     },
     deleteBtnClick(userId) {
       this.$emit('deleteBtnClick', userId)
+    },
+    settingBtnClick(userInfo) {
+      this.$emit('settingBtnClick', userInfo)
     }
   },
   components: {}

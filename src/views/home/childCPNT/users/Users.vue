@@ -23,35 +23,49 @@
       </el-col>
     </el-row>
     <div class="text item">
-      <!-- 表单区域 -->
+      <!-- 表格区域 -->
       <user-table
         @update:state="updateState"
         @editUser="showUserInfo"
         @deleteBtnClick="deleteUser"
+        @settingBtnClick="showUserRole"
         :userList="userList"
       ></user-table>
     </div>
     <!-- 添加用户对话框 -->
     <Dialog
-      :title="'添加用户'"
+      title="添加用户"
       :dialogVisible="addDialogVisible"
       @cancelDialog="cancelDialog('addDialogVisible')"
       @saveChange="saveAddUser('addUserFormRef')"
-      @clearForm="clearForm('addUserFormRef')"
+      @closeDialog="clearForm('addUserFormRef')"
     >
       <add-user-form ref="addUserFormRef" />
     </Dialog>
-
     <!-- 编辑用户对话框 -->
     <Dialog
-      :title="'编辑用户'"
+      title="编辑用户"
       :dialogVisible="editDialogVisible"
       @cancelDialog="cancelDialog('editDialogVisible')"
       @saveChange="saveEditUser('editUserFormRef', editUserForm)"
-      @clearForm="clearForm('editUserFormRef')"
+      @closeDialog="clearForm('editUserFormRef')"
     >
-      <!-- TODO 编辑用户表单 -->
       <edit-user-form ref="editUserFormRef" :editUserForm="editUserForm" />
+    </Dialog>
+    <!-- 分配角色对话框 -->
+    <Dialog
+      width="30%"
+      title="分配角色"
+      :dialogVisible="settingRoleDialogVisible"
+      @cancelDialog="cancelDialog('settingRoleDialogVisible')"
+      @saveChange="settingUserRole(setUserRoleForm.id, selectedRoleId)"
+    >
+      <set-user-role-form
+        ref="setUserRoleFormRef"
+        :setUserRoleForm="setUserRoleForm"
+        :rolesList="rolesList"
+        @changeRoleId="getRoleId"
+      />
     </Dialog>
 
     <!-- 分页器 -->
@@ -71,8 +85,9 @@
 <script>
 import UserTable from './UserTable'
 import Dialog from 'components/common/Dialog'
-import EditUserForm from './EditUserForm'
 import AddUserForm from './AddUserForm'
+import EditUserForm from './EditUserForm'
+import SetUserRoleForm from './SetUserRoleForm'
 
 import {
   getUsersData,
@@ -80,8 +95,11 @@ import {
   addUser,
   getUserById,
   modifyUser,
-  deleteUserById
+  deleteUserById,
+  setUserRoleById
 } from 'network/user'
+
+import { getRolesList } from 'network/roles'
 
 export default {
   name: 'Users',
@@ -100,14 +118,23 @@ export default {
       // 编辑用户对话框显示状态
       editDialogVisible: false,
       // 将被修改的用户的信息
-      editUserForm: {}
+      editUserForm: {},
+      // 分配角色对话框显示状态
+      settingRoleDialogVisible: false,
+      // 将被分配角色的用户的信息
+      setUserRoleForm: {},
+      // 角色列表
+      rolesList: [],
+      // 下拉选框中被选中的角色的id
+      selectedRoleId: ''
     }
   },
   components: {
     UserTable,
     Dialog,
     AddUserForm,
-    EditUserForm
+    EditUserForm,
+    SetUserRoleForm
   },
   methods: {
     // 渲染用户列表
@@ -141,7 +168,6 @@ export default {
           })
         })
     },
-    // TODO 跳转最后一页
     // 页码值改变
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
@@ -184,12 +210,11 @@ export default {
     },
     // 查询用户信息
     queryUser() {
-      console.log(this.queryInfo.query)
       this.getUser(this.queryInfo)
     },
     // 关闭弹窗
-    cancelDialog(visble) {
-      this[visble] = false
+    cancelDialog(visible) {
+      this[visible] = false
     },
     // 重置表单 参数ref为表单的引用
     clearForm(ref) {
@@ -201,6 +226,7 @@ export default {
     },
     // 添加用户并关闭对话框
     saveAddUser(ref) {
+      // 预校验
       this.preCheck(ref)
         .then(() => {
           const {
@@ -209,6 +235,7 @@ export default {
             email,
             mobile
           } = this.$refs.addUserFormRef.addUserForm
+          // 添加用户
           return addUser(username, pass, email, mobile)
         })
         .then((res) => {
@@ -281,25 +308,26 @@ export default {
         type: 'warning'
       })
         .then(() => {
+          return deleteUserById(id)
+        })
+        .then((res) => {
           // 在数据库中删除对应用户 并重新渲染页面
-          deleteUserById(id).then((res) => {
-            if (res.meta.status !== 200) {
-              return this.$message.error({
-                message: res.meta.msg,
-                center: true,
-                showClose: true,
-                duration: 1000
-              })
-            }
-            this.$message.success({
+          if (res.meta.status !== 200) {
+            return this.$message.error({
               message: res.meta.msg,
               center: true,
               showClose: true,
               duration: 1000
             })
-            // 更新视图
-            this.getUser(this.queryInfo)
+          }
+          this.$message.success({
+            message: res.meta.msg,
+            center: true,
+            showClose: true,
+            duration: 1000
           })
+          // 更新视图
+          this.getUser(this.queryInfo)
         })
         .catch(() => {
           this.$message({
@@ -307,6 +335,62 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    // 在对话框中展示用户当前角色信息
+    showUserRole(userInfo) {
+      this.setUserRoleForm = userInfo
+      // 查询角色列表
+      getRolesList().then((res) => {
+        if (res.meta.status !== 200) {
+          return this.$message.error({
+            message: res.meta.msg,
+            center: true,
+            showClose: true,
+            duration: 1000
+          })
+        }
+        this.$message.success({
+          showClose: true,
+          message: res.meta.msg,
+          center: true,
+          duration: 1000
+        })
+        this.rolesList = res.data
+      })
+      this.settingRoleDialogVisible = true
+    },
+    // 下拉选框内容变化时获取选中角色的Id
+    getRoleId(id) {
+      this.selectedRoleId = id
+    },
+    // 保存用户分配的角色
+    settingUserRole(uid, rid) {
+      // 如果传入的角色id为空 关闭对话框
+      if (!rid) {
+        this.settingRoleDialogVisible = false
+        return false
+      }
+      setUserRoleById(uid, rid).then((res) => {
+        if (res.meta.status !== 200) {
+          return this.$message.error({
+            message: res.meta.msg,
+            center: true,
+            showClose: true,
+            duration: 1000
+          })
+        }
+        this.$message.success({
+          showClose: true,
+          message: res.meta.msg,
+          center: true,
+          duration: 1000
+        })
+        // 刷新视图
+        this.getUser(this.queryInfo)
+        this.selectedRoleId = ''
+        this.$refs.setUserRoleFormRef.selectedRoleId = null
+      })
+      this.settingRoleDialogVisible = false
     }
   },
   mounted() {
