@@ -7,11 +7,7 @@
       <span class="form-text">{{ setUserRoleForm.roleName }}</span>
     </el-form-item>
     <el-form-item label="新角色:">
-      <el-select
-        @change="changeRoleId"
-        v-model="selectedRoleId"
-        placeholder="请选择角色"
-      >
+      <el-select v-model="selectedRoleId" placeholder="请选择角色">
         <el-option
           v-for="(r, i) in rolesList"
           :label="r.roleName"
@@ -28,9 +24,6 @@ export default {
   name: 'SetUserRoleForm',
   data() {
     return {
-      // selectedRoleId: {
-      //   default: this.roleId
-      // }
       selectedRoleId: null
     }
   },
@@ -42,17 +35,6 @@ export default {
     rolesList: {
       type: Array,
       default: () => []
-    }
-    // roleId: {
-    //   type: Number,
-    //   default: 0
-    // }
-  },
-  components: {},
-  methods: {
-    changeRoleId() {
-      this.$emit('changeRoleId', this.selectedRoleId)
-      console.log(this.selectedRoleId)
     }
   },
   destroyed() {

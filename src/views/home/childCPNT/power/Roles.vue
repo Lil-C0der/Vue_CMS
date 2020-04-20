@@ -171,6 +171,9 @@ export default {
           this.getRolesList()
           this.cancelDialog('addRoleDialogVisible')
         })
+        .catch(() => {
+          return false
+        })
     },
     // 根据角色id查询角色
     showRoleInfo(id) {
@@ -271,7 +274,7 @@ export default {
             showClose: true,
             duration: 1000
           })
-          // 更新试图
+          // 更新视图
           const role = this.rolesList.find((n) => {
             // 返回被操作的角色
             return n.id === ids.roleId

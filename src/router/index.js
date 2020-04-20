@@ -10,6 +10,7 @@ const SKip = () => import('views/common/Skip')
 const Users = () => import('views/home/childCPNT/users/Users')
 const Rights = () => import('views/home/childCPNT/power/Rights')
 const Roles = () => import('views/home/childCPNT/power/Roles')
+const Categories = () => import('views/home/childCPNT/goods/Categories')
 
 const routes = [
   {
@@ -28,7 +29,8 @@ const routes = [
       { path: '/welcome', component: Welcome },
       { path: '/users', component: Users },
       { path: '/rights', component: Rights },
-      { path: '/roles', component: Roles }
+      { path: '/roles', component: Roles },
+      { path: '/categories', component: Categories }
     ]
   },
   {

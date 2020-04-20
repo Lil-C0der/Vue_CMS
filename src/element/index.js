@@ -27,7 +27,8 @@ import {
   Tag,
   Tree,
   Select,
-  Option
+  Option,
+  Cascader
 } from 'element-ui'
 
 const element = {
@@ -59,6 +60,7 @@ const element = {
     Vue.use(Tree)
     Vue.use(Select)
     Vue.use(Option)
+    Vue.use(Cascader)
     Vue.prototype.$message = Message
     Vue.prototype.$confirm = MessageBox.confirm
   }

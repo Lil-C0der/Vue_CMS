@@ -4,7 +4,7 @@
     <el-table-column prop="authName" label="权限" width="180">
     </el-table-column>
     <el-table-column prop="path" label="访问路径"> </el-table-column>
-    <el-table-column prop="level" label="权限等级">
+    <el-table-column label="权限等级">
       <template slot-scope="scope">
         <el-tag type="primary" v-if="scope.row.level == 0">一级</el-tag>
         <el-tag type="success" v-if="scope.row.level == 1">二级</el-tag>

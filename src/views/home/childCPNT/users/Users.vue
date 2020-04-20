@@ -58,16 +58,14 @@
       title="分配角色"
       :dialogVisible="settingRoleDialogVisible"
       @cancelDialog="cancelDialog('settingRoleDialogVisible')"
-      @saveChange="settingUserRole(setUserRoleForm.id, selectedRoleId)"
+      @saveChange="settingUserRole('setUserRoleFormRef')"
     >
       <set-user-role-form
         ref="setUserRoleFormRef"
         :setUserRoleForm="setUserRoleForm"
         :rolesList="rolesList"
-        @changeRoleId="getRoleId"
       />
     </Dialog>
-
     <!-- 分页器 -->
     <el-pagination
       @size-change="handleSizeChange"
@@ -173,7 +171,7 @@ export default {
       this.queryInfo.pagenum = newPage
       this.getUser(this.queryInfo)
     },
-    // 每页容量改变
+    // 页面容量改变
     handleSizeChange(newSize) {
       this.queryInfo.pagesize = newSize
       this.getUser(this.queryInfo)
@@ -359,12 +357,10 @@ export default {
       })
       this.settingRoleDialogVisible = true
     },
-    // 下拉选框内容变化时获取选中角色的Id
-    getRoleId(id) {
-      this.selectedRoleId = id
-    },
     // 保存用户分配的角色
-    settingUserRole(uid, rid) {
+    settingUserRole(ref) {
+      const uid = this.$refs[ref].setUserRoleForm.id
+      const rid = this.$refs[ref].selectedRoleId
       // 如果传入的角色id为空 关闭对话框
       if (!rid) {
         this.settingRoleDialogVisible = false
