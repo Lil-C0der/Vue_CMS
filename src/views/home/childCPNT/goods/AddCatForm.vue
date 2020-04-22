@@ -9,8 +9,6 @@
       <el-input v-model="addCatForm.catName"></el-input>
     </el-form-item>
     <el-form-item label="父级分类">
-      <!-- TODO 选择父级分类 级联选择器-->
-
       <el-cascader
         ref="cascaderRef"
         clearable
@@ -36,8 +34,7 @@ export default {
       },
       addCatFormRules: {
         catName: [{ required: true, message: '请输入分类名', trigger: 'blur' }]
-      },
-      options: this.topCatList
+      }
     }
   },
   props: {

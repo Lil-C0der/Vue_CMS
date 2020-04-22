@@ -76,6 +76,6 @@ export default {
 
 <style lang="less" scoped>
 .el-table {
-  margin: 10px 0;
+  margin: 20px 0;
 }
 </style>

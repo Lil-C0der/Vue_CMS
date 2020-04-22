@@ -10,9 +10,9 @@
       </template>
     </el-table-column>
     <el-table-column type="index" width="50" label="#"></el-table-column>
-    <el-table-column prop="roleName" label="角色" width="100">
+    <el-table-column prop="roleName" label="角色" width="140">
     </el-table-column>
-    <el-table-column prop="roleDesc" label="描述" width="180">
+    <el-table-column prop="roleDesc" label="描述" width="220">
     </el-table-column>
     <!-- 表格操作列 -->
     <el-table-column label="操作">
