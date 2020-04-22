@@ -64,8 +64,9 @@
     </el-tabs>
 
     <!-- 添加参数对话框 -->
+    <!-- :title="(sel === 'many' ? '添加动态参数' : '添加静态属性')" -->
     <Dialog
-      :title="(sel === 'many' ? '添加动态参数' : '添加静态属性')"
+      :title="addTitle"
       :dialogVisible="addParamsDialogVisible"
       @cancelDialog="cancelDialog('addParamsDialogVisible')"
       @saveChange="saveAddParams('addParamsFormRef')"
@@ -74,8 +75,9 @@
     </Dialog>
 
     <!-- 编辑参数对话框 -->
+    <!-- :title="(sel === 'many' ? '编辑参数' : '编辑属性')" -->
     <Dialog
-      :title="(sel === 'many' ? '编辑参数' : '编辑属性')"
+      :title="editTitle"
       :dialogVisible="editParamsDialogVisible"
       @cancelDialog="cancelDialog('editParamsDialogVisible')"
       @saveChange="saveEditParms('editParamsFormRef')"
@@ -104,6 +106,8 @@ import {
 } from 'network/params'
 import { getCategories } from 'network/categories'
 
+import { MANY, ONLY } from 'common/const'
+
 export default {
   name: 'Params',
   data() {
@@ -114,7 +118,7 @@ export default {
         many: []
       },
       catIds: null,
-      sel: 'many',
+      sel: MANY,
       addParamsDialogVisible: false,
       editParamsDialogVisible: false,
       // 即将被编辑的参数信息
@@ -160,7 +164,7 @@ export default {
     },
     // 初始化表格
     initParamsTable() {
-      Promise.all([this.getParams('many'), this.getParams('only')])
+      Promise.all([this.getParams(MANY), this.getParams(ONLY)])
         .then(() => {
           this.$message.success({
             message: '获取参数列表成功',
@@ -170,7 +174,6 @@ export default {
           })
         })
         .catch((err) => {
-          // console.log(err)
           this.$message.success({
             message: err,
             center: true,
@@ -214,11 +217,8 @@ export default {
     },
     // 显示要编辑的参数信息
     showParamsInfo(id) {
-      console.log(id)
-
       queryParamsById(this.lastCatId, id, this.sel).then((res) => {
         this.editParamsForm = res.data
-        console.log(this.editParamsForm)
       })
       this.editParamsDialogVisible = true
     },
@@ -328,15 +328,15 @@ export default {
       if (!this.catIds) return
       return this.catIds[this.catIds.length - 1]
     },
-    manyAttrVals() {
-      return this.paramsList.many
-        .map((n) => n.attr_vals)
-        .toString()
-        .slice(1)
-        .split(' ')
+    addTitle() {
+      if (this.sel === MANY) {
+        return '添加动态参数'
+      } else return '添加静态属性'
     },
-    onlyAttrVals() {
-      return this.paramsList.only.map((n) => n.attr_vals)
+    editTitle() {
+      if (this.sel === MANY) {
+        return '编辑参数'
+      } else return '编辑属性'
     }
   },
   mounted() {

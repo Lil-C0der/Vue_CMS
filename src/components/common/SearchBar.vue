@@ -33,7 +33,6 @@ export default {
       this.$emit('clearInput')
     },
     searchBtnClick(query) {
-      console.log(query)
       this.$emit('searchBtnClick', query)
     }
   },

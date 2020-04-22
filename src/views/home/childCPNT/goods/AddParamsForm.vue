@@ -5,16 +5,15 @@
     :rules="addParamsFormRules"
     label-width="80px"
   >
-    <el-form-item
-      :label="sel === 'many' ? '参数名称' : '属性名称'"
-      prop="paramsName"
-    >
+    <el-form-item :label="labelName" prop="paramsName">
       <el-input v-model="addParamsForm.paramsName"></el-input>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import { MANY } from 'common/const'
+
 export default {
   name: 'AddParamsForm',
   data() {
@@ -37,6 +36,13 @@ export default {
     sel: {
       type: String,
       default: ''
+    }
+  },
+  computed: {
+    labelName() {
+      if (this.sel === MANY) {
+        return '参数名称'
+      } else return '属性名称'
     }
   }
 }
