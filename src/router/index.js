@@ -12,6 +12,7 @@ const Rights = () => import('views/home/childCPNT/power/Rights')
 const Roles = () => import('views/home/childCPNT/power/Roles')
 const Categories = () => import('views/home/childCPNT/goods/Categories')
 const Params = () => import('views/home/childCPNT/goods/Params')
+const GoodsList = () => import('views/home/childCPNT/goods/GoodsList')
 
 const routes = [
   {
@@ -32,7 +33,8 @@ const routes = [
       { path: '/rights', component: Rights },
       { path: '/roles', component: Roles },
       { path: '/categories', component: Categories },
-      { path: '/params', component: Params }
+      { path: '/params', component: Params },
+      { path: '/goods', component: GoodsList }
     ]
   },
   {

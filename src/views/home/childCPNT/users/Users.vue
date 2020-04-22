@@ -1,27 +1,11 @@
 <template>
   <el-card class="box-card">
     <!-- 搜索与添加 -->
-    <el-row :gutter="20">
-      <el-col :span="8">
-        <el-input
-          clearable
-          @clear="getUser(queryInfo)"
-          v-model="queryInfo.query"
-          placeholder="请输入内容"
-        >
-          <el-button
-            slot="append"
-            @click="queryUser(queryInfo.query)"
-            icon="el-icon-search"
-          ></el-button>
-        </el-input>
-      </el-col>
-      <el-col :span="4">
-        <el-button type="primary" @click="addDialogVisible = true"
-          >添加用户</el-button
-        >
-      </el-col>
-    </el-row>
+    <search-bar @clearInput="getUser(queryInfo)" @searchBtnClick="queryUser">
+      <el-button type="primary" @click="addDialogVisible = true"
+        >添加用户</el-button
+      >
+    </search-bar>
     <div class="text item">
       <!-- 表格区域 -->
       <user-table
@@ -83,6 +67,7 @@
 <script>
 import UserTable from './UserTable'
 import Dialog from 'components/common/Dialog'
+import SearchBar from 'components/common/SearchBar'
 import AddUserForm from './AddUserForm'
 import EditUserForm from './EditUserForm'
 import SetUserRoleForm from './SetUserRoleForm'
@@ -130,6 +115,7 @@ export default {
   components: {
     UserTable,
     Dialog,
+    SearchBar,
     AddUserForm,
     EditUserForm,
     SetUserRoleForm
@@ -207,8 +193,9 @@ export default {
         })
     },
     // 查询用户信息
-    queryUser() {
-      this.getUser(this.queryInfo)
+    queryUser(query) {
+      const { pagenum, pagesize } = this.queryInfo
+      this.getUser({ query, pagenum, pagesize })
     },
     // 关闭弹窗
     cancelDialog(visible) {
