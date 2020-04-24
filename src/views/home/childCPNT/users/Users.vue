@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card">
     <!-- 搜索与添加 -->
-    <search-bar @clearInput="getUser(queryInfo)" @searchBtnClick="queryUser">
+    <search-bar @clearInput="clearInput" @searchBtnClick="queryUser">
       <el-button type="primary" @click="addDialogVisible = true"
         >添加用户</el-button
       >
@@ -197,6 +197,13 @@ export default {
       const { pagenum, pagesize } = this.queryInfo
       this.getUser({ query, pagenum, pagesize })
     },
+    // 清空搜索框内容
+    clearInput() {
+      this.queryInfo.query = ''
+      this.queryInfo.pagenum = 1
+      this.queryInfo.pagesize = 2
+      this.getGoodsList(this.queryInfo)
+    },
     // 关闭弹窗
     cancelDialog(visible) {
       this[visible] = false
@@ -384,14 +391,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.text {
-  font-size: 14px;
-}
-
 .item {
-  padding: 18px 0;
+  padding: 20px 0;
 }
-
 .box-card {
   width: 100%;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);

@@ -24,11 +24,11 @@
       <el-container>
         <!-- 主体区域 -->
         <el-main>
+          <!-- 面包屑导航 -->
           <bread-crumb
             :crumbObj="crumbObj"
             :showAllItem="$route.path !== '/welcome'"
           />
-
           <keep-alive>
             <router-view />
           </keep-alive>
@@ -90,38 +90,47 @@ export default {
     menuItemClick(authNameObj) {
       this.crumbObj = authNameObj
       sessionStorage.setItem('crumbObj', JSON.stringify(this.crumbObj))
-    }
-  },
-
-  created() {
+    },
     // 获取左侧菜单列表数据
-    getMenuList()
-      .then((res) => {
-        if (res.meta.status !== 200) {
-          return this.$message.error({
-            message: res.meta.msg,
+    initMenu() {
+      getMenuList()
+        .then((res) => {
+          if (res.meta.status !== 200) {
+            return this.$message.error({
+              message: res.meta.msg,
+              center: true,
+              showClose: true,
+              duration: 1000
+            })
+          }
+          const data = res.data
+          this.menuList = data
+        })
+        .catch((err) => {
+          this.$message.error({
+            message: err,
             center: true,
             showClose: true,
             duration: 1000
           })
-        }
-        const data = res.data
-        this.menuList = data
-      })
-      .catch((err) => {
-        this.$message.error({
-          message: err,
-          center: true,
-          showClose: true,
-          duration: 1000
         })
-      })
-    // 获取面包屑导航信息 存放在sessionStorage中
-    if (!this.crumbObj.length) {
+    },
+    getCrumbObj() {
+      // 获取面包屑导航信息 存放在sessionStorage中
       if (sessionStorage.getItem('crumbObj')) {
         this.crumbObj = JSON.parse(sessionStorage.getItem('crumbObj'))
       }
     }
+  },
+  created() {
+    this.initMenu()
+    this.getCrumbObj()
+    this.$bus.$on('toNewPage', () => {
+      this.getCrumbObj()
+    })
+  },
+  beforeDestroy() {
+    this.$bus.$off('toNewPage')
   }
 }
 </script>

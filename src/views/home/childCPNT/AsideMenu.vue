@@ -1,6 +1,6 @@
 <template>
   <el-menu
-    :default-active="activeIndex"
+    :default-active="firstPathName"
     :collapse="isCollapse"
     class="aside-menu el-menu-vertical"
     :collapse-transition="false"
@@ -21,7 +21,7 @@
       <el-menu-item
         v-for="(child, childIndex) in n.children"
         :key="childIndex.id"
-        :index="child.path"
+        :index="'/' + child.path"
         @click="menuItemClick({ parent: n.authName, child: child.authName })"
       >
         <template slot="title">
@@ -39,9 +39,7 @@
 export default {
   name: 'asideMenu',
   data() {
-    return {
-      activeIndex: ''
-    }
+    return {}
   },
   props: {
     menuList: {
@@ -62,8 +60,10 @@ export default {
       this.$emit('menuItemClick', authNameObj)
     }
   },
-  mounted() {
-    this.activeIndex = window.sessionStorage.getItem('activeIndex')
+  computed: {
+    firstPathName() {
+      return '/' + this.$route.path.split('/')[1]
+    }
   },
   components: {}
 }
@@ -75,7 +75,6 @@ export default {
   overflow: hidden;
 }
 .menu-item {
-  /* float: left; */
   text-align: left;
   .menu-item-text {
     margin-left: 10px;

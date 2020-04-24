@@ -22,13 +22,11 @@ export default {
         paramsName: ''
       },
       addParamsFormRules: {
-        paramsName: [
-          {
-            required: true,
-            message: '请输入参数名或属性名',
-            trigger: 'blur'
-          }
-        ]
+        paramsName: {
+          required: true,
+          message: '请输入参数名或属性名',
+          trigger: 'blur'
+        }
       }
     }
   },

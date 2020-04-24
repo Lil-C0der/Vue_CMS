@@ -1,7 +1,6 @@
 <template>
   <el-card>
     <el-alert
-      width="50%"
       title="注意"
       description="只允许为第三级分类设置参数！"
       type="warning"
@@ -64,7 +63,6 @@
     </el-tabs>
 
     <!-- 添加参数对话框 -->
-    <!-- :title="(sel === 'many' ? '添加动态参数' : '添加静态属性')" -->
     <Dialog
       :title="addTitle"
       :dialogVisible="addParamsDialogVisible"
@@ -75,7 +73,6 @@
     </Dialog>
 
     <!-- 编辑参数对话框 -->
-    <!-- :title="(sel === 'many' ? '编辑参数' : '编辑属性')" -->
     <Dialog
       :title="editTitle"
       :dialogVisible="editParamsDialogVisible"
@@ -164,6 +161,16 @@ export default {
     },
     // 初始化表格
     initParamsTable() {
+      // 判断是否选择了第三级分类
+      if (this.catIds.length !== 3) {
+        this.catIds = []
+        return this.$message.warning({
+          message: '只允许选中第三级分类',
+          center: true,
+          showClose: true,
+          duration: 1000
+        })
+      }
       Promise.all([this.getParams(MANY), this.getParams(ONLY)])
         .then(() => {
           this.$message.success({
@@ -174,7 +181,7 @@ export default {
           })
         })
         .catch((err) => {
-          this.$message.success({
+          this.$message.error({
             message: err,
             center: true,
             showClose: true,
@@ -325,8 +332,8 @@ export default {
       return this.catIds === null
     },
     lastCatId() {
-      if (!this.catIds) return
-      return this.catIds[this.catIds.length - 1]
+      if (!this.catIds) return null
+      else return this.catIds[2]
     },
     addTitle() {
       if (this.sel === MANY) {

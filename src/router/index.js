@@ -13,6 +13,7 @@ const Roles = () => import('views/home/childCPNT/power/Roles')
 const Categories = () => import('views/home/childCPNT/goods/Categories')
 const Params = () => import('views/home/childCPNT/goods/Params')
 const GoodsList = () => import('views/home/childCPNT/goods/GoodsList')
+const AddGoods = () => import('views/home/childCPNT/goods/AddGoods')
 
 const routes = [
   {
@@ -34,7 +35,8 @@ const routes = [
       { path: '/roles', component: Roles },
       { path: '/categories', component: Categories },
       { path: '/params', component: Params },
-      { path: '/goods', component: GoodsList }
+      { path: '/goods', component: GoodsList },
+      { path: '/goods/add', component: AddGoods }
     ]
   },
   {
@@ -59,6 +61,17 @@ router.beforeEach((to, from, next) => {
   if (!tokenStr) {
     // 跳转提示页面
     return next('/skip')
+  }
+  if (to.path === '/goods/add') {
+    sessionStorage.setItem(
+      'crumbObj',
+      JSON.stringify({
+        parent: '商品管理',
+        child: '添加商品'
+      })
+    )
+    // sessionStorage.setItem('activeIndex', to.path.slice(1).split('/')[1])
+    return next()
   }
   // 保存左侧菜单二级按钮的index
   sessionStorage.setItem('activeIndex', to.path.slice(1))

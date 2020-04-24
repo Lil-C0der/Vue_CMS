@@ -31,15 +31,14 @@
     <el-table-column min-width="180" label="操作">
       <template ref="expand" slot-scope="scope">
         <el-button
-          @click="editBtnClick(scope.row)"
+          @click="editBtnClick(scope.row.goods_id)"
           size="mini"
           type="primary"
           icon="el-icon-edit"
           >编辑</el-button
         >
-
         <el-button
-          @click="deleteBtnClick(scope.row)"
+          @click="deleteBtnClick(scope.row.goods_id)"
           size="mini"
           type="danger"
           icon="el-icon-delete"
@@ -58,11 +57,11 @@ export default {
   },
   components: {},
   methods: {
-    editBtnClick(row) {
-      console.log(row)
+    editBtnClick(id) {
+      this.$emit('editBtnClick', id)
     },
-    deleteBtnClick(row) {
-      console.log(row)
+    deleteBtnClick(id) {
+      this.$emit('deleteGoods', id)
     }
   },
   props: {
