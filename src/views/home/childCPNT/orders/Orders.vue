@@ -3,11 +3,13 @@
     <!-- 搜索框区域 -->
     <search-bar @searchBtnClick="getOrder"></search-bar>
     <!-- 表格区域 -->
-    <order-table
-      :orderList="orderList"
-      @editBtnClick="showEditAddrDialog"
-      @showProgressBtnClick="showProgressInfo"
-    ></order-table>
+    <div class="item text">
+      <order-table
+        :orderList="orderList"
+        @editBtnClick="showEditAddrDialog"
+        @showProgressBtnClick="showProgressInfo"
+      ></order-table>
+    </div>
     <!-- 分页器 -->
     <el-pagination
       @size-change="handleSizeChange"
@@ -166,4 +168,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.item {
+  padding: 20px 0;
+}
+</style>

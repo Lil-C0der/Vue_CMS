@@ -11,6 +11,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "default-passive-events": "^1.0.10",
+    "echarts": "^4.7.0",
     "element-ui": "^2.13.1",
     "vue": "^2.6.11",
     "vue-quill-editor": "^3.0.6",
