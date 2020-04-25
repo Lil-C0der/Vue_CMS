@@ -14,6 +14,7 @@ const Categories = () => import('views/home/childCPNT/goods/Categories')
 const Params = () => import('views/home/childCPNT/goods/Params')
 const GoodsList = () => import('views/home/childCPNT/goods/GoodsList')
 const AddGoods = () => import('views/home/childCPNT/goods/AddGoods')
+const Orders = () => import('views/home/childCPNT/orders/Orders')
 
 const routes = [
   {
@@ -36,7 +37,8 @@ const routes = [
       { path: '/categories', component: Categories },
       { path: '/params', component: Params },
       { path: '/goods', component: GoodsList },
-      { path: '/goods/add', component: AddGoods }
+      { path: '/goods/add', component: AddGoods },
+      { path: '/orders', component: Orders }
     ]
   },
   {
