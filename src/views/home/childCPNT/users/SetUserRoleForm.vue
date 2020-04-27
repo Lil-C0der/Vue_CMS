@@ -36,9 +36,6 @@ export default {
       type: Array,
       default: () => []
     }
-  },
-  destroyed() {
-    console.log('adsad')
   }
 }
 </script>

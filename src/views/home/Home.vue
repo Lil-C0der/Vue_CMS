@@ -18,17 +18,13 @@
           :menuList="menuList"
           :menuIconObj="menuIconObj"
           :isCollapse="isCollapse"
-          @menuItemClick="menuItemClick"
         />
       </el-aside>
       <el-container>
         <!-- 主体区域 -->
         <el-main>
           <!-- 面包屑导航 -->
-          <bread-crumb
-            :crumbObj="crumbObj"
-            :showAllItem="$route.path !== '/welcome'"
-          />
+          <bread-crumb :showAllItem="$route.path !== '/welcome'" />
           <keep-alive>
             <router-view />
           </keep-alive>
@@ -47,6 +43,9 @@ import BreadCrumb from 'components/common/BreadCrumb'
 
 import { getMenuList } from 'network/home'
 
+import { mapMutations } from 'vuex'
+import { USERLOGOUT } from 'store/types'
+
 export default {
   name: 'home',
   data() {
@@ -62,9 +61,7 @@ export default {
         145: 'el-icon-s-marketing'
       },
       // 是否折叠
-      isCollapse: false,
-      // 面包屑二级导航
-      crumbObj: {}
+      isCollapse: false
     }
   },
   components: {
@@ -72,9 +69,10 @@ export default {
     BreadCrumb
   },
   methods: {
+    ...mapMutations([USERLOGOUT]),
     // 退出
     logout() {
-      sessionStorage.clear('token')
+      this[USERLOGOUT]()
       this.$message.error({
         showClose: true,
         message: '已退出',
@@ -86,10 +84,6 @@ export default {
     // 侧边栏折叠
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
-    },
-    menuItemClick(authNameObj) {
-      this.crumbObj = authNameObj
-      sessionStorage.setItem('crumbObj', JSON.stringify(this.crumbObj))
     },
     // 获取左侧菜单列表数据
     initMenu() {
@@ -114,23 +108,10 @@ export default {
             duration: 1000
           })
         })
-    },
-    getCrumbObj() {
-      // 获取面包屑导航信息 存放在sessionStorage中
-      if (sessionStorage.getItem('crumbObj')) {
-        this.crumbObj = JSON.parse(sessionStorage.getItem('crumbObj'))
-      }
     }
   },
   created() {
     this.initMenu()
-    this.getCrumbObj()
-    this.$bus.$on('toNewPage', () => {
-      this.getCrumbObj()
-    })
-  },
-  beforeDestroy() {
-    this.$bus.$off('toNewPage')
   }
 }
 </script>

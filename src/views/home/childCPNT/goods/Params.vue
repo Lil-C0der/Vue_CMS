@@ -272,7 +272,6 @@ export default {
         attr_sel,
         attr_vals.toString()
       ).then((res) => {
-        console.log(res)
         if (res.meta.status !== 200) {
           return this.$message.error({
             message: res.meta.msg,
@@ -297,7 +296,6 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          console.log(this.lastCatId, attrId)
           return deleteParamsById(this.lastCatId, attrId)
         })
         .then((res) => {

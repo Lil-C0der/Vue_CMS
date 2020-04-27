@@ -36,6 +36,10 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
+import { SETCRUMBOBJ } from 'store/types'
+
 export default {
   name: 'asideMenu',
   data() {
@@ -56,16 +60,16 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([SETCRUMBOBJ]),
     menuItemClick(authNameObj) {
-      this.$emit('menuItemClick', authNameObj)
+      this[SETCRUMBOBJ](authNameObj)
     }
   },
   computed: {
     firstPathName() {
       return '/' + this.$route.path.split('/')[1]
     }
-  },
-  components: {}
+  }
 }
 </script>
 

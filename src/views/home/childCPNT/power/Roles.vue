@@ -330,10 +330,7 @@ export default {
     },
     // 保存对角色权限的改动 rids为字符串
     setRoleRights(roleId, rids) {
-      console.log(roleId, rids)
-
       setRoleRightsById(roleId, rids).then((res) => {
-        console.log(res)
         if (res.meta.status !== 200) {
           return this.$message.error({
             message: res.meta.msg,

@@ -167,7 +167,6 @@ export default {
     updateState(id, type) {
       changeState(id, type)
         .then((res) => {
-          console.log(res)
           if (res.meta.status !== 200) {
             return this.$message.error({
               message: res.meta.msg,

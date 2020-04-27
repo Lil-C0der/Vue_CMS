@@ -81,7 +81,6 @@
             :label="n.attr_name"
           >
             <!-- 复选框组 -->
-            {{ n.attr_vals }}
             <el-checkbox-group v-model="n.attr_vals">
               <el-checkbox
                 border
@@ -146,6 +145,11 @@ import { getParamsListById } from 'network/params'
 import { addGoods } from 'network/goods'
 
 import { MANY, ONLY } from 'common/const'
+
+import { quillEditor } from 'vue-quill-editor'
+
+import { mapMutations } from 'vuex'
+import { SETCRUMBOBJ } from 'store/types'
 export default {
   name: 'AddGoods',
   data() {
@@ -200,8 +204,11 @@ export default {
       previewImgUrl: ''
     }
   },
-  components: {},
+  components: {
+    quillEditor
+  },
   methods: {
+    ...mapMutations([SETCRUMBOBJ]),
     // 获取商品分类列表
     iniCatList() {
       getCategories().then((res) => {
@@ -210,8 +217,6 @@ export default {
     },
     // 级联选择器选项变化时获取选中的分类
     handleChange() {
-      console.log('asds')
-
       if (this.addGoodsForm.goods_cat.length !== 3) {
         this.addGoodsForm.goods_cat.length = []
         return this.$message
@@ -326,16 +331,6 @@ export default {
             pics,
             attrs
           } = this.addGoodsForm
-          console.log(
-            goods_name,
-            goods_cat,
-            goods_price,
-            goods_number,
-            goods_weight,
-            goods_introduce,
-            pics,
-            attrs
-          )
           return addGoods(
             goods_name,
             goods_cat,
@@ -388,9 +383,6 @@ export default {
   },
   created() {
     this.iniCatList()
-  },
-  activated() {
-    this.$bus.$emit('toNewPage')
   }
 }
 </script>

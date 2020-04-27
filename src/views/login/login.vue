@@ -9,12 +9,15 @@ import LoginBox from 'views/login/childCPNT/LoginBox'
 
 import { loginCheck } from 'network/login'
 
+import { mapMutations } from 'vuex'
+import { USERLOGIN, USERLOGOUT } from 'store/types'
 export default {
   name: 'login',
   data() {
     return {}
   },
   methods: {
+    ...mapMutations([USERLOGIN, USERLOGOUT]),
     // 登录
     async login($event) {
       // 校验
@@ -36,7 +39,7 @@ export default {
         duration: 1000
       })
       // 保存token 用于权限验证
-      window.sessionStorage.setItem('token', res.data.token)
+      this[USERLOGIN](res.data.token)
       this.$router.push('/home')
     }
   },

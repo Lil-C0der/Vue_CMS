@@ -155,7 +155,7 @@ export default {
       this.$router.push('/goods/add')
     }
   },
-  mounted() {
+  activated() {
     this.getGoodsList(this.queryInfo)
   }
 }

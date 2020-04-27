@@ -42,9 +42,6 @@ export default {
       type: Object,
       default: () => {}
     }
-  },
-  mounted() {
-    console.log(this.cityData)
   }
 }
 </script>

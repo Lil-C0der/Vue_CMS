@@ -130,7 +130,6 @@ export default {
     },
     // TODO 保存更改地址
     saveEditAddr() {
-      console.log(this.addrForm)
       return this.$message.warning({
         message: '还在开发中....',
         center: true,
@@ -141,7 +140,6 @@ export default {
     // 查询物流
     showProgressInfo(row) {
       this.progressDialogVisible = true
-      // console.log(row)
       getProgressInfo().then((res) => {
         if (res.meta.status !== 200) {
           return this.$message.error({
@@ -158,7 +156,6 @@ export default {
           duration: 1000
         })
         this.progressInfo = res.data
-        console.log(this.progressInfo)
       })
     }
   },

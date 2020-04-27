@@ -17,6 +17,10 @@
 </template>
 
 <script>
+import store from 'store'
+import { mapMutations } from 'vuex'
+import { SETCRUMBOBJ } from 'store/types'
+
 export default {
   name: 'BreadCrumb',
   data() {
@@ -26,13 +30,19 @@ export default {
     showAllItem: {
       type: Boolean,
       default: false
-    },
-    crumbObj: {
-      type: Object,
-      default: () => {}
     }
   },
-  components: {}
+  methods: {
+    ...mapMutations([SETCRUMBOBJ])
+  },
+  computed: {
+    crumbObj() {
+      return store.state.crumbObj
+    }
+  },
+  created() {
+    this[SETCRUMBOBJ](JSON.parse(window.sessionStorage.getItem('crumbObj')))
+  }
 }
 </script>
 

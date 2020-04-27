@@ -1,21 +1,58 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from 'store'
+import { SETCRUMBOBJ } from 'store/types'
 
 Vue.use(VueRouter)
 
-const Login = () => import('views/login/Login')
-const Home = () => import('views/home/Home')
-const Welcome = () => import('views/home/childCPNT/welcome/Welcome')
-const SKip = () => import('views/common/Skip')
-const Users = () => import('views/home/childCPNT/users/Users')
-const Rights = () => import('views/home/childCPNT/power/Rights')
-const Roles = () => import('views/home/childCPNT/power/Roles')
-const Categories = () => import('views/home/childCPNT/goods/Categories')
-const Params = () => import('views/home/childCPNT/goods/Params')
-const GoodsList = () => import('views/home/childCPNT/goods/GoodsList')
-const AddGoods = () => import('views/home/childCPNT/goods/AddGoods')
-const Orders = () => import('views/home/childCPNT/orders/Orders')
-const Reports = () => import('views/home/childCPNT/reports/Reports')
+const Login = () =>
+  import(/* webpackChunkName: "Login_Home_Welcome_Skip" */ 'views/login/Login')
+const Home = () =>
+  import(/* webpackChunkName: "Login_Home_Welcome_Skip" */ 'views/home/Home')
+const Welcome = () =>
+  import(
+    /* webpackChunkName: "Login_Home_Welcome_Skip" */ 'views/home/childCPNT/welcome/Welcome'
+  )
+const Skip = () =>
+  import(/* webpackChunkName: "Login_Home_Welcome_Skip" */ 'views/common/Skip')
+
+const Users = () =>
+  import(
+    /* webpackChunkName: "Users_Rights_Roles" */ 'views/home/childCPNT/users/Users'
+  )
+const Rights = () =>
+  import(
+    /* webpackChunkName: "Users_Rights_Roles" */ 'views/home/childCPNT/power/Rights'
+  )
+const Roles = () =>
+  import(
+    /* webpackChunkName: "Users_Rights_Roles" */ 'views/home/childCPNT/power/Roles'
+  )
+
+const Categories = () =>
+  import(
+    /* webpackChunkName: "Categories_Params_GoodList_AddGoods" */ 'views/home/childCPNT/goods/Categories'
+  )
+const Params = () =>
+  import(
+    /* webpackChunkName: "Categories_Params_GoodList_AddGoods" */ 'views/home/childCPNT/goods/Params'
+  )
+const GoodsList = () =>
+  import(
+    /* webpackChunkName: "Categories_Params_GoodList_AddGoods" */ 'views/home/childCPNT/goods/GoodsList'
+  )
+const AddGoods = () =>
+  import(
+    /* webpackChunkName: "Categories_Params_GoodList_AddGoods" */ 'views/home/childCPNT/goods/AddGoods'
+  )
+
+const Orders = () =>
+  import(/* webpackChunkName: "Orders" */ 'views/home/childCPNT/orders/Orders')
+
+const Reports = () =>
+  import(
+    /* webpackChunkName: "Reports" */ 'views/home/childCPNT/reports/Reports'
+  )
 
 const routes = [
   {
@@ -24,28 +61,101 @@ const routes = [
   },
   {
     path: '/login',
-    component: Login
+    component: Login,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/skip',
+    component: Skip,
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     path: '/home',
     component: Home,
     redirect: '/welcome',
     children: [
-      { path: '/welcome', component: Welcome },
-      { path: '/users', component: Users },
-      { path: '/rights', component: Rights },
-      { path: '/roles', component: Roles },
-      { path: '/categories', component: Categories },
-      { path: '/params', component: Params },
-      { path: '/goods', component: GoodsList },
-      { path: '/goods/add', component: AddGoods },
-      { path: '/orders', component: Orders },
-      { path: '/reports', component: Reports }
-    ]
-  },
-  {
-    path: '/skip',
-    component: SKip
+      {
+        path: '/welcome',
+        component: Welcome,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/users',
+        component: Users,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/rights',
+        component: Rights,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/roles',
+        component: Roles,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/categories',
+        component: Categories,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/params',
+        component: Params,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/goods',
+        component: GoodsList,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/goods/add',
+        component: AddGoods,
+        meta: {
+          requiresAuth: true
+        },
+        beforeEnter(to, from, next) {
+          store.commit(SETCRUMBOBJ, { parent: '商品列表', child: '添加商品' })
+          next()
+        }
+      },
+      {
+        path: '/orders',
+        component: Orders,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/reports',
+        component: Reports,
+        meta: {
+          requiresAuth: true
+        }
+      }
+    ],
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
@@ -56,31 +166,13 @@ const router = new VueRouter({
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') return next()
-  // 前往提示页面
-  if (to.path === '/skip') return next()
-  // 获取当前的token
-  const tokenStr = sessionStorage.getItem('token')
-  // 没有token 即用户尚未登录
-  if (!tokenStr) {
-    // 跳转提示页面
-    return next('/skip')
-  }
-  if (to.path === '/goods/add') {
-    sessionStorage.setItem(
-      'crumbObj',
-      JSON.stringify({
-        parent: '商品管理',
-        child: '添加商品'
-      })
-    )
-    // sessionStorage.setItem('activeIndex', to.path.slice(1).split('/')[1])
+  if (!to.meta.requiresAuth) {
     return next()
+  } else {
+    if (store.isLogin || window.sessionStorage.getItem('isLogin')) {
+      return next()
+    } else next('/skip')
   }
-  // 保存左侧菜单二级按钮的index
-  sessionStorage.setItem('activeIndex', to.path.slice(1))
-  // 放行
-  next()
 })
 
 export default router

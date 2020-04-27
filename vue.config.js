@@ -1,19 +1,51 @@
 const path = require('path')
+
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
+
 module.exports = {
-  // devServer: {
-  //   host: "192.168.1.108",
-  //   port: 8080
-  // },
-  configureWebpack: {
-    resolve: {
-      alias: {
-        assets: path.resolve(__dirname, 'src/assets'),
-        components: path.resolve(__dirname, 'src/components'),
-        network: path.resolve(__dirname, 'src/network'),
-        views: path.resolve(__dirname, 'src/views'),
-        common: path.resolve(__dirname, 'src/common'),
-        element: path.resolve(__dirname, 'src/element')
-      }
-    }
+  publicPath: '/',
+  outputDir: 'dist',
+  lintOnSave: true,
+  devServer: {
+    compress: false,
+    open: true
+  },
+  chainWebpack: (config) => {
+    config.resolve.alias
+      .set('assets', resolve('src/assets'))
+      .set('components', resolve('src/components'))
+      .set('network', resolve('src/network'))
+      .set('views', resolve('src/views'))
+      .set('store', resolve('src/store'))
+      .set('common', resolve('src/common'))
+      .set('element', resolve('src/element'))
+    // 发布
+    config.when(process.env.NODE_ENV === 'production', (config) => {
+      // 打包入口
+      config.entry('app').clear().add('./src/main-prod.js')
+      config.set('externals', {
+        vue: 'Vue',
+        vuex: 'Vuex',
+        'vue-router': 'VueRouter',
+        axios: 'axios',
+        echarts: 'echarts',
+        nprogress: 'NProgress',
+        'vue-quill-editor': 'VueQuillEditor'
+      })
+    })
+    config.plugin('html').tap((args) => {
+      args[0].isProd = true
+      return args
+    })
+    // 开发
+    config.when(process.env.NODE_ENV === 'development', (config) => {
+      config.entry('app').clear().add('./src/main-dev.js')
+      config.plugin('html').tap((args) => {
+        args[0].isProd = false
+        return args
+      })
+    })
   }
 }
