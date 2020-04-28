@@ -1,9 +1,6 @@
-import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from 'store'
 import { SETCRUMBOBJ } from 'store/types'
-
-Vue.use(VueRouter)
 
 const Login = () =>
   import(/* webpackChunkName: "Login_Home_Welcome_Skip" */ 'views/login/Login')
