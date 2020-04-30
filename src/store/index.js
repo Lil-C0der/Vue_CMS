@@ -1,5 +1,8 @@
+import Vue from 'vue'
 import Vuex from 'vuex'
 import { USERLOGIN, USERLOGOUT, SETCRUMBOBJ } from './types'
+
+Vue.use(Vuex)
 
 const state = {
   isLogin: false,
